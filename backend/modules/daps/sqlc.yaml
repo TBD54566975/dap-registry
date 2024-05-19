@@ -1,0 +1,13 @@
+version: "2"
+sql:
+  - engine: postgresql
+    queries: dal/queries.sql
+    schema: migrations
+    database: 
+      uri: postgres://postgres:secret@localhost:54320/daps_daps?sslmode=disable
+    gen:
+      go:
+        package: sqlc
+        out: dal/sqlc
+        emit_interface: true
+        query_parameter_limit: 3
