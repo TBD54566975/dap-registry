@@ -1,4 +1,4 @@
-module github.com/TBD54566975/dapregistry
+module github.com/TBD54566975/dap-registry
 
 go 1.22.3
 

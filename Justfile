@@ -37,7 +37,7 @@ module module:
   #!/bin/bash
   set -euo pipefail
   
-  ftl init go backend/modules --replace github.com/TBD54566975/dapregistry/backend/modules=../.. {{module}}
+  ftl init go backend/modules --replace github.com/TBD54566975/dap-registry/backend/modules=../.. {{module}}
   git add backend/modules/{{module}}
 
 # Scaffold a new FTL module with a DB.
@@ -45,7 +45,7 @@ module-with-db module:
   #!/bin/bash
   set -euo pipefail
   
-  ftl init go backend/modules --replace github.com/TBD54566975/dapregistry/backend/modules=../.. {{module}}
+  ftl init go backend/modules --replace github.com/TBD54566975/dap-registry/backend/modules=../.. {{module}}
   echo -n "postgres://postgres:secret@localhost:54320/{{module}}_{{module}}?sslmode=disable" | ftl secret set --inline -C ftl-project.toml {{module}}.FTL_DSN_{{uppercase(module)}}_{{uppercase(module)}}
   echo -n "postgres://postgres:secret@localhost:54320/{{module}}_{{module}}_test?sslmode=disable" | ftl secret set --inline -C ftl-project.toml {{module}}.FTL_TEST_DSN_{{uppercase(module)}}_{{uppercase(module)}}
 

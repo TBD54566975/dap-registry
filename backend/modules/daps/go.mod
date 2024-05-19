@@ -3,7 +3,8 @@ module ftl/daps
 go 1.22.2
 
 require (
-	github.com/TBD54566975/dap-go v0.0.0-00010101000000-000000000000
+	// github.com/TBD54566975/dap-go v0.0.0-00010101000000-000000000000
+	github.com/TBD54566975/dap-go v0.1.0
 	github.com/TBD54566975/ftl v0.217.7
 	github.com/alecthomas/assert/v2 v2.9.0
 	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438
@@ -56,6 +57,6 @@ require (
 	google.golang.org/protobuf v1.34.1 // indirect
 )
 
-replace github.com/TBD54566975/dapregistry/backend/modules => ../..
+replace github.com/TBD54566975/dap-registry/backend/modules => ../..
 
-replace github.com/TBD54566975/dap-go => ../../../../dap-go
+// replace github.com/TBD54566975/dap-go => ../../../../dap-go

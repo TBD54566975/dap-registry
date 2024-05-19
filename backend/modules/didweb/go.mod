@@ -44,4 +44,4 @@ require (
 	google.golang.org/protobuf v1.34.1 // indirect
 )
 
-replace github.com/TBD54566975/dapregistry/backend/modules => ../..
+replace github.com/TBD54566975/dap-registry/backend/modules => ../..
