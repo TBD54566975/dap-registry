@@ -77,7 +77,7 @@ func Register(ctx context.Context, req RegisterRequest) (RegisterResponse, error
 
 	bdid := bearerDIDHandle.Get(ctx)
 	signer := decodedJWS.SignerDID.URI
-	if signer != reg.DID && signer != bdid.DID.String() {
+	if signer != reg.DID || signer != bdid.DID.URI {
 		return RegisterResponse{
 			Status: http.StatusBadRequest,
 			Error: ftl.Some(ErrResponse{
