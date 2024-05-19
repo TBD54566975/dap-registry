@@ -207,7 +207,11 @@ type RegisterRequestBody struct {
 type RegisterResponse = builtin.HttpResponse[RegisterResponseBody, ErrResponse]
 type RegisterResponseBody struct{}
 
-type ResolveRequest = builtin.HttpRequest[ftl.Unit]
+type ResolveRequest = builtin.HttpRequest[ResolveRequestParams]
+type ResolveRequestParams struct {
+	Handle string
+}
+
 type ResolveResponse = builtin.HttpResponse[ResolveResponseBody, ErrResponse]
 type ResolveResponseBody = RegisterRequestBody
 
