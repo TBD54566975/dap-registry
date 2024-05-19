@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	libdap "github.com/TBD54566975/dap-go/dap"
-	"github.com/TBD54566975/ftl/go-runtime/ftl"
 	"github.com/TBD54566975/ftl/go-runtime/ftl/ftltest"
 	"github.com/alecthomas/assert/v2"
 	"github.com/tbd54566975/web5-go/dids/didjwk"
@@ -89,7 +88,7 @@ func TestResolve(t *testing.T) {
 			Headers: map[string][]string{
 				"Host": {domain},
 			},
-			Body: ftl.Unit{},
+			Body: ResolveRequestParams{Handle: handle},
 		})
 
 		assert.NoError(t, err)
@@ -126,7 +125,7 @@ func TestResolve(t *testing.T) {
 			Headers: map[string][]string{
 				"Host": {"didpay.me"},
 			},
-			Body: ftl.Unit{},
+			Body: ResolveRequestParams{Handle: "moegrammer"},
 		})
 
 		assert.NoError(t, err)
