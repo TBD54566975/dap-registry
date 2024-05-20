@@ -18,7 +18,7 @@ dbmate-up module:
   dbmate --url $dburl --migrations-dir $migrations_dir drop || true
   dbmate --url $dburl --migrations-dir $migrations_dir up
 
-# Create a new migration file for the given backend module and table.
+# create a new migration file for the given backend module and table.
 dbmate-new module action table:
   #!/bin/bash
   set -euo pipefail
@@ -33,6 +33,7 @@ didweb domain="http://localhost:8892/ingress":
 
   echo -n $(cd backend; go run cmd/didweb/didweb.go {{domain}}) | ftl secret set -C ftl-project.toml --inline  did_web_portable_did
 
+# scaffold a new FTL module
 module module:
   #!/bin/bash
   set -euo pipefail
@@ -40,16 +41,19 @@ module module:
   ftl init go backend/modules --replace github.com/TBD54566975/dap-registry/backend/modules=../.. {{module}}
   git add backend/modules/{{module}}
 
-# Scaffold a new FTL module with a DB.
+# scaffold a new FTL module with a DB 
 module-with-db module:
   #!/bin/bash
   set -euo pipefail
   
-  ftl init go backend/modules --replace github.com/TBD54566975/dap-registry/backend/modules=../.. {{module}}
+  # Reuse the module recipe
+  just module {{module}}
+  
+  # Add database configuration
   echo -n "postgres://postgres:secret@localhost:54320/{{module}}_{{module}}?sslmode=disable" | ftl secret set --inline -C ftl-project.toml {{module}}.FTL_DSN_{{uppercase(module)}}_{{uppercase(module)}}
   echo -n "postgres://postgres:secret@localhost:54320/{{module}}_{{module}}_test?sslmode=disable" | ftl secret set --inline -C ftl-project.toml {{module}}.FTL_TEST_DSN_{{uppercase(module)}}_{{uppercase(module)}}
 
-# run go mod tidy in all modules
+# run go mod tidy for all modules
 tidy:
   #!/bin/bash
   set -euo pipefail
