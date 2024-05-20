@@ -14,3 +14,4 @@ ftl-min-version = ""
   ftl = ""
 
 [commands]
+startup = ["just migrate drop"]
