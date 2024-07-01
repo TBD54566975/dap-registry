@@ -3,10 +3,11 @@ package daps
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"testing"
 
-	libdap "github.com/TBD54566975/dap-go/dap"
+	dapsdk "github.com/TBD54566975/dap-go/dap"
 	"github.com/TBD54566975/ftl/go-runtime/ftl/ftltest"
 	"github.com/alecthomas/assert/v2"
 	"github.com/tbd54566975/web5-go/dids/didjwk"
@@ -14,8 +15,9 @@ import (
 
 func setup() context.Context {
 	return ftltest.Context(
-		ftltest.WithProjectFiles(),
+		ftltest.WithDefaultProjectFile(),
 		ftltest.WithDatabase(dbHandle),
+		ftltest.WithMapsAllowed(),
 	)
 }
 
@@ -26,7 +28,7 @@ func TestRegister(t *testing.T) {
 		bdid, err := didjwk.Create()
 		assert.NoError(t, err)
 
-		reg := libdap.NewRegistration("moegrammer", "didpay.me", bdid.URI)
+		reg := dapsdk.NewRegistration("moegrammer", "didpay.me", bdid.URI)
 		err = reg.Sign(bdid)
 		assert.NoError(t, err)
 
@@ -45,6 +47,12 @@ func TestRegister(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.NoError(t, err)
+		j, err := json.MarshalIndent(resp.Error, "", "  ")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(string(j))
+
 		assert.Equal(t, http.StatusCreated, resp.Status)
 		assert.Zero(t, resp.Error)
 	})
@@ -60,7 +68,7 @@ func TestResolve(t *testing.T) {
 		handle := "moegrammer"
 		domain := "didpay.me"
 
-		reg := libdap.NewRegistration(handle, domain, bdid.URI)
+		reg := dapsdk.NewRegistration(handle, domain, bdid.URI)
 		err = reg.Sign(bdid)
 		assert.NoError(t, err)
 
@@ -101,7 +109,7 @@ func TestResolve(t *testing.T) {
 		marshaled, err := json.Marshal(body)
 		assert.NoError(t, err)
 
-		var resolvedReg libdap.RegistrationRequest
+		var resolvedReg dapsdk.RegistrationRequest
 		err = json.Unmarshal(marshaled, &resolvedReg)
 		assert.NoError(t, err)
 

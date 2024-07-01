@@ -11,7 +11,7 @@ import (
 
 	_dal "ftl/daps/dal"
 
-	libdap "github.com/TBD54566975/dap-go/dap"
+	dapsdk "github.com/TBD54566975/dap-go/dap"
 	"github.com/TBD54566975/ftl/go-runtime/ftl"
 	"github.com/tbd54566975/web5-go/dids/did"
 )
@@ -52,7 +52,7 @@ func Register(ctx context.Context, req RegisterRequest) (RegisterResponse, error
 		}, nil
 	}
 
-	var reg libdap.RegistrationRequest
+	var reg dapsdk.RegistrationRequest
 	if err := json.Unmarshal(marshaled, &reg); err != nil {
 		return RegisterResponse{
 			Status: http.StatusBadRequest,
@@ -77,7 +77,7 @@ func Register(ctx context.Context, req RegisterRequest) (RegisterResponse, error
 
 	bdid := bearerDIDHandle.Get(ctx)
 	signer := decodedJWS.SignerDID.URI
-	if signer != reg.DID || signer != bdid.DID.URI {
+	if signer != reg.DID && signer != bdid.DID.URI {
 		return RegisterResponse{
 			Status: http.StatusBadRequest,
 			Error: ftl.Some(ErrResponse{

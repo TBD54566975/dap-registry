@@ -3,6 +3,13 @@ set positional-arguments
 _help:
   @just -l
 
+
+build:
+  #!/bin/bash
+  set -euo pipefail
+
+  ftl build backend/modules
+
 bump-ftl:
   #!/bin/bash
   set -euo pipefail
@@ -10,7 +17,7 @@ bump-ftl:
   hermit update
   hermit upgrade ftl
   cd backend && go get github.com/TBD54566975/ftl@latest && cd ..
-  just build
+  just tidy
 
 # Bump the Go version and update all go.mod files.
 bump-go:
@@ -74,7 +81,7 @@ dev:
   set -euo pipefail
 
   export FTL_CONFIG="$(pwd)/ftl-project.toml"
-  ftl dev backend --recreate -j2 --bind=http://0.0.0.0:8892 --allow-origins '*'
+  ftl dev --recreate -j2 --bind=http://0.0.0.0:8891 --log-timestamps --allow-origins '*'
 
 
 didweb domain="http://localhost:8892/ingress":
@@ -115,8 +122,34 @@ module-with-db module:
   just module {{module}}
   
   # Add database configuration
-  echo -n "postgres://postgres:secret@localhost:54320/{{module}}_{{module}}?sslmode=disable" | ftl secret set --inline -C ftl-project.toml {{module}}.FTL_DSN_{{uppercase(module)}}_{{uppercase(module)}}
-  echo -n "postgres://postgres:secret@localhost:54320/{{module}}_{{module}}_test?sslmode=disable" | ftl secret set --inline -C ftl-project.toml {{module}}.FTL_TEST_DSN_{{uppercase(module)}}_{{uppercase(module)}}
+  echo -n "postgres://postgres:secret@localhost:15432/{{module}}_{{module}}?sslmode=disable" | ftl secret set --inline -C ftl-project.toml {{module}}.FTL_DSN_{{uppercase(module)}}_{{uppercase(module)}}
+  echo -n "postgres://postgres:secret@localhost:15432/{{module}}_{{module}}_test?sslmode=disable" | ftl secret set --inline -C ftl-project.toml {{module}}.FTL_TEST_DSN_{{uppercase(module)}}_{{uppercase(module)}}
+
+test:
+  #!/bin/bash
+  set -euo pipefail
+
+  just migrate
+  just build
+
+  dirs=("$@")
+  if [ ${#dirs[@]} -eq 0 ]; then
+    dirs=($(find backend -name go.mod | grep -v /_ | xargs -n1 dirname))
+  fi
+
+
+  for dir in "${dirs[@]}"; do
+    echo "Testing $dir"
+    (cd "$dir" && go test -fullpath -v -p 1 ./...)
+  done
+
+test-ci:
+  #!/bin/bash
+  set -euo pipefail
+
+  trap "ftl serve --stop" EXIT ERR INT
+  ftl serve --recreate --background --stop
+  just test
 
 # run go mod tidy for all modules
 tidy:
@@ -124,4 +157,3 @@ tidy:
   set -euo pipefail
   
   find backend -name go.mod | grep -v /_ | xargs -n1 dirname | xargs -n1 -I{} sh -c "echo 'updating {}'; cd {} && go mod tidy"
-
