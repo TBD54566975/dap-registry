@@ -16,7 +16,7 @@ func setup(t *testing.T) (context.Context, *libdal.DAL) {
 	t.Helper()
 	dbHandle := ftl.PostgresDatabase("daps")
 	ctx := ftltest.Context(
-		ftltest.WithProjectFiles(),
+		ftltest.WithDefaultProjectFile(),
 		ftltest.WithDatabase(dbHandle),
 	)
 
